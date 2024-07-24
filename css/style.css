@@ -1,7 +1,3 @@
-/* 
-Reset
- */
-
 #grid-container {
     display: grid;
     gap: 5px;
@@ -19,6 +15,10 @@ Reset
     cursor: pointer;
 }
 
-#grid-container .clicked {
-    background-color: lightcoral;
+.bomb {
+    background-color: red !important;
+}
+
+.safe {
+    background-color: green !important;
 }

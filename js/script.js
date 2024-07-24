@@ -1,13 +1,15 @@
 const startButton = document.getElementById('start-button');
 const difficultySelect = document.getElementById('difficulty');
+const scoreDisplay = document.getElementById('score');
 
+// Aggiunge un event listener al pulsante per generare la griglia
 startButton.addEventListener('click', function () {
     const gridContainer = document.getElementById('grid-container');
     const difficulty = difficultySelect.value;
 
     let numCells, numCols;
 
-    // Determina il numero di celle e colonne in base alla difficoltà selezionata
+    // Imposta il numero di celle e colonne in base alla difficoltà selezionata
     switch (difficulty) {
         case '1':
             numCells = 100;
@@ -24,29 +26,62 @@ startButton.addEventListener('click', function () {
             numCols = 7;
             console.log("Difficoltà 3 selezionata: 49 caselle, 7 colonne");
             break;
-
+        default:
+            numCells = 100;
+            numCols = 10;
+            console.log("Difficoltà predefinita: 100 caselle, 10 colonne");
     }
 
-    // Pulisce la griglia precedente
+    // Genera 16 numeri casuali unici per le bombe
+    const bombs = new Set();
+    while (bombs.size < 16) {
+        const bomb = Math.floor(Math.random() * numCells) + 1;
+        bombs.add(bomb);
+    }
+    console.log("Bombe generate: ", [...bombs]);
+
+    // Resetta il contenuto del contenitore della griglia e imposta il layout della griglia
     gridContainer.innerHTML = '';
-    // Imposta il numero di colonne della griglia
     gridContainer.style.gridTemplateColumns = `repeat(${numCols}, 50px)`;
+
+    // Resetta il punteggio
+    scoreDisplay.innerHTML = '';
+    let score = 0;
+    let gameEnded = false;
 
     // Crea le celle della griglia
     for (let i = 1; i <= numCells; i++) {
         const newCell = document.createElement('div');
         newCell.innerHTML = i;
 
-        // Aggiunge un listener per il click sulla cella
+
+        // Aggiunge un event listener a ogni cella per gestire il clic
         newCell.addEventListener('click', function () {
-            this.classList.add('clicked');
-            console.log(`Cella cliccata: ${this.innerHTML}`);
+            if (gameEnded) return;
+
+            // Se la cella contiene una bomba
+            if (bombs.has(i)) {
+                this.classList.add('bomb');
+                this.innerHTML = '<i class="fas fa-bomb" style="color:black;"></i>'; // Aggiunge l'icona della bomba
+                console.log(`Hai cliccato su una bomba! Cella: ${i}`);
+                gameEnded = true;
+                scoreDisplay.innerHTML = `Hai perso! Il tuo punteggio è: ${score}`;
+            } else {
+                this.classList.add('safe');
+                this.style.pointerEvents = 'none'; // Disabilita ulteriori clic sulla cella
+                console.log(`Cella sicura cliccata: ${i}`);
+                score++;
+                // Controlla se l'utente ha cliccato su tutte le celle sicure
+                if (score === numCells - 16) {
+                    gameEnded = true;
+                    scoreDisplay.innerHTML = `Hai vinto! Il tuo punteggio è: ${score}`;
+                }
+            }
         });
 
         // Aggiunge la cella al contenitore della griglia
         gridContainer.append(newCell);
     }
 
-    // Log della griglia generata
     console.log(`Griglia generata con ${numCells} caselle e ${numCols} colonne.`);
 });
