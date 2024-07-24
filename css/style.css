@@ -1,0 +1,24 @@
+/* 
+Reset
+ */
+
+#grid-container {
+    display: grid;
+    gap: 5px;
+    justify-content: center;
+}
+
+#grid-container div {
+    background-color: lightblue;
+    border: 1px solid #000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 50px;
+    width: 50px;
+    cursor: pointer;
+}
+
+#grid-container .clicked {
+    background-color: lightcoral;
+}
